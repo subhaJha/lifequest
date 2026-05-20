@@ -15,12 +15,18 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// AUTH ENDPOINTS
+/* AUTH ENDPOINTS */
 export const authAPI = {
   register: (username: string, email: string, password: string) =>
     api.post('/auth/register', { username, email, password }),
   login: (email: string, password: string) =>
     api.post('/auth/login', { email, password }),
+
+  forgotPassword: (email: string) =>
+    api.post('/auth/forgot-password', { email }),
+
+  resetPassword: (token: string, password: string) =>
+    api.post('/auth/reset-password', { token, password }),
 };
 
 // USER ENDPOINTS

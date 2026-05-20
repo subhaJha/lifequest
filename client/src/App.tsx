@@ -3,6 +3,8 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Dashboard } from './pages/Dashboard';
+import { ForgotPassword } from './pages/ForgotPassword';
+import { ResetPassword } from './pages/ResetPassword';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -18,6 +20,8 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/login" element={isLoggedIn ? <Navigate to="/dashboard" /> : <Login />} />
       <Route path="/register" element={isLoggedIn ? <Navigate to="/dashboard" /> : <Register />} />
+      <Route path="/forgot-password" element={isLoggedIn ? <Navigate to="/dashboard" /> : <ForgotPassword />} />
+      <Route path="/reset-password" element={isLoggedIn ? <Navigate to="/dashboard" /> : <ResetPassword />} />
       <Route
         path="/dashboard"
         element={

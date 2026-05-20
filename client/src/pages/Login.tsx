@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import { PageLayout } from '../components/layout/PageLayout';
 
 export const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -20,16 +21,17 @@ export const Login: React.FC = () => {
       const res = await authAPI.login(email, password);
       login(res.data.user, res.data.token);
       navigate('/dashboard');
-    } catch (err: any) {
-      setError(err.response?.data?.msg || 'Login failed');
+    } catch (err: unknown) {
+      const maybeAxiosErr = err as { response?: { data?: { msg?: string } } };
+      setError(maybeAxiosErr.response?.data?.msg || 'Login failed');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
-      <div className="bg-gray-800 rounded-lg shadow-2xl w-full max-w-md p-8">
+    <PageLayout variant="auth">
+      <div className="bg-gray-800 rounded-lg shadow-2xl w-full p-8">
         <h1 className="text-4xl font-bold text-white mb-2 text-center">⚔️ LifeQuest</h1>
         <p className="text-gray-400 text-center mb-8">Your Life. Your RPG. Your Quest.</p>
 
@@ -68,6 +70,15 @@ export const Login: React.FC = () => {
         </form>
 
         <p className="text-gray-400 text-center mt-6">
+          <button
+            onClick={() => navigate('/forgot-password')}
+            className="text-purple-400 hover:text-purple-300 font-semibold"
+          >
+            Forgot password?
+          </button>
+        </p>
+
+        <p className="text-gray-400 text-center mt-3">
           No account?{' '}
           <button
             onClick={() => navigate('/register')}
@@ -77,6 +88,6 @@ export const Login: React.FC = () => {
           </button>
         </p>
       </div>
-    </div>
+    </PageLayout>
   );
 };

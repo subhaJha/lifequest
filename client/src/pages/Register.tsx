@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import { PageLayout } from '../components/layout/PageLayout';
 
 export const Register: React.FC = () => {
   const navigate = useNavigate();
@@ -21,16 +22,17 @@ export const Register: React.FC = () => {
       const res = await authAPI.register(username, email, password);
       login(res.data.user, res.data.token);
       navigate('/dashboard');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Registration failed');
+    } catch (err: unknown) {
+      const maybeAxiosErr = err as { response?: { data?: { message?: string } } };
+      setError(maybeAxiosErr.response?.data?.message || 'Registration failed');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
-      <div className="bg-gray-800 rounded-lg shadow-2xl w-full max-w-md p-8">
+    <PageLayout variant="auth">
+      <div className="bg-gray-800 rounded-lg shadow-2xl w-full p-8">
         <h1 className="text-4xl font-bold text-white mb-2 text-center">⚔️ LifeQuest</h1>
         <p className="text-gray-400 text-center mb-8">Start Your Adventure</p>
 
@@ -89,6 +91,6 @@ export const Register: React.FC = () => {
           </button>
         </p>
       </div>
-    </div>
+    </PageLayout>
   );
 };
