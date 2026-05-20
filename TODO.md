@@ -1,0 +1,3 @@
+- [x] Update `client/src/main.tsx` to import `App.css` (Tailwind) and keep global variables from `index.css` without overriding typography
+- [x] Tame global `h1/h2` rules in `client/src/index.css` so Tailwind typography on components takes precedence
+- [ ] Quick visual polish: adjust Dashboard loading placeholder styling to match app theme
