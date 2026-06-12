@@ -24,23 +24,27 @@ app.use((req, res, next) => {
 });
 
 // CORS: allow frontend + Vercel preview domains
-const allowedOrigins = [
-  "https://lifequest-snowy.vercel.app",
-  "https://lifequest-8ccl.vercel.app",
-  "https://lifequest-z383.vercel.app",
-  "http://localhost:5173",
-];
-
 app.use(
   cors({
     origin: (origin, callback) => {
+      // Allow non-browser requests
       if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) return callback(null, true);
+
+      // Allow local dev
+      if (origin === "http://localhost:5173") return callback(null, true);
+
+      // Allow all Vercel preview domains for this app: https://lifequest-*.vercel.app
+      if (/^https:\/\/lifequest-[a-z0-9-]+\.vercel\.app$/i.test(origin)) {
+        return callback(null, true);
+      }
+
+      // Reject everything else
       return callback(null, false);
     },
     credentials: true,
   })
 );
+
 
 app.use(express.json({ limit: "1mb" }));
 
@@ -74,5 +78,10 @@ app.get("/", (req, res) => {
 });
 
 // IMPORTANT FOR VERCEL (do NOT call app.listen here)
-module.exports = app;
 
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}
+
+module.exports = app;
