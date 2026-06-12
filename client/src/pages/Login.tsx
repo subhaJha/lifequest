@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { authAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import { PageLayout } from '../components/layout/PageLayout';
@@ -9,21 +10,22 @@ export const Login: React.FC = () => {
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);  // 👈 new
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
     setLoading(true);
 
     try {
       const res = await authAPI.login(email, password);
       login(res.data.user, res.data.token);
+      toast.success('Welcome back! 🎮');
       navigate('/dashboard');
     } catch (err: unknown) {
-      const maybeAxiosErr = err as { response?: { data?: { msg?: string } } };
-      setError(maybeAxiosErr.response?.data?.msg || 'Login failed');
+      const maybeAxiosErr = err as { response?: { data?: { message?: string } } };
+      const msg = maybeAxiosErr.response?.data?.message || 'Login failed';
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -49,16 +51,23 @@ export const Login: React.FC = () => {
 
           <div>
             <label className="block text-gray-300 mb-2">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-gray-700 border border-gray-600 rounded px-4 py-2 text-white focus:outline-none focus:border-purple-500"
-              required
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-gray-700 border border-gray-600 rounded px-4 py-2 text-white focus:outline-none focus:border-purple-500 pr-12"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition"
+              >
+                {showPassword ? '🙈' : '👁️'}
+              </button>
+            </div>
           </div>
-
-          {error && <p className="text-red-400 text-sm">{error}</p>}
 
           <button
             type="submit"

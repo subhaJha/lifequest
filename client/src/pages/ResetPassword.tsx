@@ -2,36 +2,32 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { PageLayout } from '../components/layout/PageLayout';
 import { authAPI } from '../services/api';
+import toast from 'react-hot-toast';
 
 export const ResetPassword: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const token = searchParams.get('token') || '';
+  const token = new URLSearchParams(location.search).get('token') || '';
 
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [status, setStatus] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setStatus('');
     setLoading(true);
 
     try {
       if (!token) {
-        setError('Missing reset token');
+        toast.error('Missing reset token');
         return;
       }
-
       await authAPI.resetPassword(token, password);
-      setStatus('Password updated. You can now log in.');
-      setTimeout(() => navigate('/login'), 1200);
+      toast.success('Password updated! Redirecting... 🎉');
+      setTimeout(() => navigate('/login'), 1500);
     } catch (err: unknown) {
       const maybeAxiosErr = err as { response?: { data?: { message?: string } } };
-      setError(maybeAxiosErr.response?.data?.message || 'Failed to reset password');
+      toast.error(maybeAxiosErr.response?.data?.message || 'Failed to reset password');
     } finally {
       setLoading(false);
     }
@@ -46,18 +42,24 @@ export const ResetPassword: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-gray-300 mb-2">New Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-gray-700 border border-gray-600 rounded px-4 py-2 text-white focus:outline-none focus:border-purple-500"
-              required
-              minLength={6}
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-gray-700 border border-gray-600 rounded px-4 py-2 text-white focus:outline-none focus:border-purple-500 pr-12"
+                required
+                minLength={6}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition"
+              >
+                {showPassword ? '🙈' : '👁️'}
+              </button>
+            </div>
           </div>
-
-          {error && <p className="text-red-400 text-sm">{error}</p>}
-          {status && <p className="text-green-400 text-sm">{status}</p>}
 
           <button
             type="submit"

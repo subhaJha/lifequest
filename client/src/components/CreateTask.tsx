@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { taskAPI } from '../services/api';
 
 interface CreateTaskProps {
@@ -12,11 +13,9 @@ export const CreateTask: React.FC<CreateTaskProps> = ({ onTaskCreated }) => {
   const [xpReward, setXpReward] = useState(50);
   const [priority, setPriority] = useState('medium');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
     setLoading(true);
 
     try {
@@ -26,9 +25,11 @@ export const CreateTask: React.FC<CreateTaskProps> = ({ onTaskCreated }) => {
       setCategory('other');
       setXpReward(50);
       setPriority('medium');
+      toast.success(`Quest created! +${xpReward} XP ⚔️`);
       onTaskCreated();
-    } catch (err: any) {
-      setError(err.response?.data?.msg || 'Failed to create task');
+    } catch (err: unknown) {
+      const maybeAxiosErr = err as { response?: { data?: { message?: string } } };
+      toast.error(maybeAxiosErr.response?.data?.message || 'Failed to create quest');
     } finally {
       setLoading(false);
     }
@@ -89,8 +90,6 @@ export const CreateTask: React.FC<CreateTaskProps> = ({ onTaskCreated }) => {
           className="w-full bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white focus:outline-none focus:border-purple-500"
           placeholder="XP Reward"
         />
-
-        {error && <p className="text-red-400 text-sm">{error}</p>}
 
         <button
           type="submit"

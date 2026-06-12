@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { authAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import { PageLayout } from '../components/layout/PageLayout';
@@ -10,21 +11,21 @@ export const Register: React.FC = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
     setLoading(true);
 
     try {
       const res = await authAPI.register(username, email, password);
       login(res.data.user, res.data.token);
+      toast.success('Welcome to LifeQuest! ⚔️');
       navigate('/dashboard');
     } catch (err: unknown) {
       const maybeAxiosErr = err as { response?: { data?: { message?: string } } };
-      setError(maybeAxiosErr.response?.data?.message || 'Registration failed');
+      toast.error(maybeAxiosErr.response?.data?.message || 'Registration failed');
     } finally {
       setLoading(false);
     }
@@ -61,16 +62,23 @@ export const Register: React.FC = () => {
 
           <div>
             <label className="block text-gray-300 mb-2">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-gray-700 border border-gray-600 rounded px-4 py-2 text-white focus:outline-none focus:border-purple-500"
-              required
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-gray-700 border border-gray-600 rounded px-4 py-2 text-white focus:outline-none focus:border-purple-500 pr-12"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition"
+              >
+                {showPassword ? '🙈' : '👁️'}
+              </button>
+            </div>
           </div>
-
-          {error && <p className="text-red-400 text-sm">{error}</p>}
 
           <button
             type="submit"
@@ -83,10 +91,7 @@ export const Register: React.FC = () => {
 
         <p className="text-gray-400 text-center mt-6">
           Already have an account?{' '}
-          <button
-            onClick={() => navigate('/login')}
-            className="text-purple-400 hover:text-purple-300 font-semibold"
-          >
+          <button onClick={() => navigate('/login')} className="text-purple-400 hover:text-purple-300 font-semibold">
             Login
           </button>
         </p>

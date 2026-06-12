@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useAuth } from '../contexts/AuthContext';
 import { userAPI, taskAPI } from '../services/api';
 import { TaskList } from '../components/TaskList';
@@ -28,17 +29,16 @@ export const Dashboard: React.FC = () => {
       setTasks(tasksRes.data);
     } catch (err) {
       console.error('Failed to load data:', err);
+      toast.error('Failed to load data. Please refresh.');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    // Initial dashboard load (defer to avoid lint warnings about sync state updates in effects)
     const id = window.setTimeout(() => {
       void loadData();
     }, 0);
-
     return () => window.clearTimeout(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -46,13 +46,18 @@ export const Dashboard: React.FC = () => {
   const handleTaskCreated = async () => {
     await loadData();
     setShowCreateTask(false);
+    toast.success('Quest created! ⚔️');
+  };
+
+  const handleTaskCompleted = async () => {
+    await loadData();
+    toast.success('Quest completed! +XP 🌟');
   };
 
   if (loading) return <div className="flex items-center justify-center h-screen text-white">Loading...</div>;
 
   return (
     <AppLayout>
-      {/* Tasks Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
@@ -67,7 +72,7 @@ export const Dashboard: React.FC = () => {
 
           {showCreateTask && <CreateTask onTaskCreated={handleTaskCreated} />}
 
-          <TaskList tasks={tasks} onTaskCompleted={loadData} />
+          <TaskList tasks={tasks} onTaskCompleted={handleTaskCompleted} />
         </div>
 
         {/* Sidebar */}
