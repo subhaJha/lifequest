@@ -2,26 +2,23 @@ import React, { useState } from 'react';
 import { PageLayout } from '../components/layout/PageLayout';
 import { authAPI } from '../services/api';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 export const ForgotPassword: React.FC = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
-  const [status, setStatus] = useState<string>('');
-  const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setStatus('');
     setLoading(true);
 
     try {
       await authAPI.forgotPassword(email);
-      setStatus('If the account exists, you will receive reset instructions.');
+      toast.success('Reset link sent! Check your email 📧');
     } catch (err: unknown) {
       const maybeAxiosErr = err as { response?: { data?: { message?: string } } };
-      setError(maybeAxiosErr.response?.data?.message || 'Failed to request password reset');
+      toast.error(maybeAxiosErr.response?.data?.message || 'Failed to send reset link');
     } finally {
       setLoading(false);
     }
@@ -44,9 +41,6 @@ export const ForgotPassword: React.FC = () => {
               required
             />
           </div>
-
-          {error && <p className="text-red-400 text-sm">{error}</p>}
-          {status && <p className="text-green-400 text-sm">{status}</p>}
 
           <button
             type="submit"
