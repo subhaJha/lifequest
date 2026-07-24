@@ -1,11 +1,14 @@
+type Todo = {
+  _id: string;
+  text: string;
+  completed: boolean;
+};
+
 type Props = {
-  todo: any;
+  todo: Todo;
   darkMode: boolean;
   deleteTodo: (id: string) => void;
-  toggleComplete: (
-    id: string,
-    completed: boolean
-  ) => void;
+  toggleComplete: (id: string, completed: boolean) => void;
 };
 
 function TodoItem({

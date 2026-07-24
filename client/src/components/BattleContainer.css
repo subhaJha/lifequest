@@ -1,0 +1,248 @@
+/* Battle Container Styles */
+
+.battle-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #1a1a2e;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  font-family: Arial, sans-serif;
+}
+
+.battle-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+  border-bottom: 3px solid #e94560;
+}
+
+.battle-header h1 {
+  margin: 0;
+  color: #ffd700;
+  font-size: 28px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.close-btn {
+  background: none;
+  border: 2px solid #e94560;
+  color: #e94560;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px 15px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  background: #e94560;
+  color: #ffffff;
+  transform: scale(1.1);
+}
+
+.battle-game {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  overflow: hidden;
+}
+
+.battle-game canvas {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Loading State */
+.battle-loading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%);
+  color: #ffd700;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+.battle-loading h2 {
+  font-size: 32px;
+  margin-bottom: 10px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.battle-loading p {
+  font-size: 18px;
+  color: #90ee90;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Error State */
+.battle-error {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%);
+  color: #ff4444;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+.battle-error h2 {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.battle-error p {
+  font-size: 18px;
+  margin-bottom: 20px;
+  max-width: 500px;
+}
+
+.battle-error button {
+  background: #e94560;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.battle-error button:hover {
+  background: #ff6666;
+  transform: scale(1.05);
+}
+
+/* Battle Result Overlay */
+.battle-result {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.95);
+  border: 3px solid;
+  border-radius: 8px;
+  padding: 40px;
+  text-align: center;
+  z-index: 2000;
+  animation: slideIn 0.5s ease-out;
+  min-width: 300px;
+}
+
+.battle-result.victory {
+  border-color: #44ff44;
+}
+
+.battle-result.defeat {
+  border-color: #ff4444;
+}
+
+.battle-result h2 {
+  font-size: 36px;
+  margin: 0 0 20px 0;
+  text-shadow: 0 0 10px currentColor;
+}
+
+.battle-result.victory h2 {
+  color: #44ff44;
+}
+
+.battle-result.defeat h2 {
+  color: #ff4444;
+}
+
+.rewards {
+  margin-top: 20px;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 15px;
+  border-radius: 4px;
+}
+
+.rewards p {
+  color: #e0e0e0;
+  font-size: 16px;
+  margin: 8px 0;
+}
+
+.rewards .xp {
+  color: #ffd700;
+  font-weight: bold;
+}
+
+.rewards .gold {
+  color: #ffd700;
+  font-weight: bold;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translate(-50%, -60%);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .battle-header h1 {
+    font-size: 20px;
+  }
+
+  .close-btn {
+    font-size: 20px;
+    padding: 5px 10px;
+  }
+
+  .battle-game {
+    padding: 10px;
+  }
+
+  .battle-result {
+    min-width: 250px;
+    padding: 30px;
+  }
+
+  .battle-result h2 {
+    font-size: 28px;
+  }
+}
+
+/* Animations */
+@keyframes glow {
+  0%,
+  100% {
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+  }
+}
+
+.battle-header {
+  animation: glow 3s ease-in-out infinite;
+}

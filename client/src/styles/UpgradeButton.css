@@ -1,0 +1,141 @@
+.upgrade-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  border: 1px solid #0f3460;
+}
+
+.upgrade-button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 13px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.upgrade-button.ready {
+  background: linear-gradient(135deg, #44ff44 0%, #00cc00 100%);
+  color: #000;
+  border: 1px solid #00aa00;
+}
+
+.upgrade-button.ready:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(68, 255, 68, 0.4);
+}
+
+.upgrade-button.insufficient {
+  background: linear-gradient(135deg, #888 0%, #555 100%);
+  color: #ccc;
+  border: 1px solid #444;
+}
+
+.upgrade-button.max-level {
+  background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+  color: #000;
+  border: 1px solid #cc8800;
+}
+
+.upgrade-button.upgrading {
+  background: linear-gradient(135deg, #ffaa00 0%, #ff6600 100%);
+  color: #fff;
+  border: 1px solid #cc6600;
+  animation: upgrading-pulse 1s infinite;
+}
+
+@keyframes upgrading-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 170, 0, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(255, 170, 0, 0);
+  }
+}
+
+.upgrade-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.upgrade-cost {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 8px;
+  border-radius: 4px;
+  border-left: 3px solid #ffd700;
+}
+
+.upgrade-cost h4 {
+  margin: 0 0 8px 0;
+  color: #ffd700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cost-items {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.cost-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cost-item.can-afford {
+  color: #90ee90;
+  border-color: #44ff44;
+}
+
+.cost-item.insufficient {
+  color: #ff6666;
+  border-color: #ff4444;
+}
+
+.cost-item.none {
+  display: none;
+}
+
+.upgrade-time {
+  margin: 6px 0 0 0;
+  font-size: 11px;
+  color: #aaa;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .upgrade-section {
+    padding: 10px;
+  }
+
+  .upgrade-button {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .cost-items {
+    gap: 8px;
+  }
+
+  .cost-item {
+    font-size: 11px;
+    padding: 3px 6px;
+  }
+}

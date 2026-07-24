@@ -2,8 +2,15 @@ const Task = require("../models/Task");
 const User = require("../models/User");
 const { addXP } = require("../utils/xp");
 
+const UserProgress = require("../models/UserProgress");
+const { upsertDailyActivityAndStreak } = require("../services/dailyStreak");
+const { evaluateAndUnlockAchievements } = require("../services/achievements");
+const { awardDistrictPoints } = require("../services/districtPoints");
+
+
 // CREATE TASK
 const createTask = async (req, res) => {
+
   try {
     const { title, description, category, xpReward, priority } = req.body;
 
@@ -64,15 +71,93 @@ const completeTask = async (req, res) => {
     task.completedAt = new Date();
     await task.save();
 
-    // Add XP to user
+    // Add XP to user (existing behavior)
     const user = await User.findById(req.user.id);
+    const previousLevel = user.level;
+    const previousXP = user.xp;
+
     const xpResult = await addXP(user, task.xpReward);
     await user.save();
+
+    // Mirror into new progression collection for Phase 1
+    await UserProgress.findOneAndUpdate(
+      { userId: user._id },
+      {
+        $set: {
+          totalXP: user.xp,
+          level: user.level,
+        },
+      },
+      { upsert: true, new: true }
+    );
+
+    // Phase 3 (District & Kingdom): award district points on first completion only.
+    // This is additional to XP; does not alter existing XP logic.
+    // Safety: if task.category is missing/invalid, district awarding is skipped (no throw).
+    let districtAwardResult = null;
+    try {
+      if (task?.category && typeof task.category === 'string') {
+        districtAwardResult = await awardDistrictPoints({
+          userId: user._id,
+          taskCategory: task.category,
+          xpReward: task.xpReward,
+        });
+      } else {
+        console.warn('[districtPoints] Skipping district award: missing/invalid task.category', {
+          taskId,
+          userId: user?._id,
+          category: task?.category,
+        });
+      }
+    } catch (err) {
+      // Preserve core task completion behavior even if district system fails.
+      console.error('[districtPoints] Failed to award district points', {
+        taskId,
+        userId: user?._id,
+        category: task?.category,
+        err: err?.message,
+      });
+    }
+
+
+    // Daily activity + streak (UTC) for first completion only
+    const dailyResult = await upsertDailyActivityAndStreak({
+      userId: user._id,
+      didCompleteTask: true,
+    });
+
+    // Backward-compatible: keep User.streak in sync
+    if (dailyResult?.newStreak !== undefined) {
+      user.streak = dailyResult.newStreak;
+      await user.save();
+    }
+
+
+    // Achievements (Phase 1)
+    const achievementResult = await evaluateAndUnlockAchievements({
+      userId: user._id,
+      taskWasFirstCompletion: true,
+      previousLevel,
+      currentLevel: user.level,
+      currentXP: previousXP + task.xpReward,
+    });
 
     res.json({
       task,
       xpResult,
+      daily: {
+        dayKey: dailyResult?.today?.dayKey,
+        streak: dailyResult?.newStreak,
+        dailyTasksCompleted: dailyResult?.today?.dailyTasksCompleted,
+      },
+      achievements: {
+        unlocked: achievementResult?.unlocked ?? [],
+      },
+      // Optional: include district award details for easier debugging (client can ignore).
+      district: districtAwardResult,
     });
+
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

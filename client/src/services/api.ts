@@ -35,8 +35,25 @@ export const userAPI = {
   getProfile: () => api.get('/user/me'),
 };
 
+// PROGRESS ENDPOINTS
+export const progressAPI = {
+  getAchievements: () => api.get('/progress/achievements'),
+  getToday: () => api.get('/progress/today'),
+};
+
+// CHARACTER ENDPOINTS
+export const characterAPI = {
+  getProfile: () => api.get('/character'),
+  selectCharacter: (payload: {
+    currentCharacterId: string;
+    avatarConfig?: Record<string, unknown>;
+  }) => api.post('/character/select', payload),
+};
+
+
 // TASK ENDPOINTS
 export const taskAPI = {
+
   createTask: (title: string, description: string, category: string, xpReward: number, priority: string) =>
     api.post('/tasks', { title, description, category, xpReward, priority }),
   getTasks: () => api.get('/tasks'),

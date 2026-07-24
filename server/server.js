@@ -13,8 +13,17 @@ try {
 
 const userRoutes = require("./routes/userRoutes.js");
 const taskRoutes = require("./routes/taskRoutes.js");
+const progressRoutes = require("./routes/progressRoutes.js");
+const characterRoutes = require("./routes/characterRoutes.js");
+const kingdomRoutes = require("./routes/kingdomRoutes.js");
+const districtRoutes = require("./routes/districtRoutes.js");
+const buildingRoutes = require("./routes/buildingRoutes.js");
+const battleRoutes = require("./routes/battleRoutes.js");
+
 
 const app = express();
+
+
 
 // MIDDLEWARE
 app.use((req, res, next) => {
@@ -72,10 +81,19 @@ app.use(async (req, res, next) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/tasks", taskRoutes);
+app.use("/api/progress", progressRoutes);
+app.use("/api/character", characterRoutes);
+app.use("/api/kingdom", kingdomRoutes);
+app.use("/api/district", districtRoutes);
+app.use("/api/buildings", buildingRoutes);
+app.use("/api/battles", battleRoutes);
 
 app.get("/", (req, res) => {
+
+
   res.send("LifeQuest API Running");
 });
+
 
 // IMPORTANT FOR VERCEL (do NOT call app.listen here)
 
