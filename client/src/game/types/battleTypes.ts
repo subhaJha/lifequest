@@ -17,11 +17,14 @@ export enum BattleDifficulty {
   EXTREME = 'extreme',
 }
 
-export enum BattleStatus {
-  IN_PROGRESS = 'in-progress',
-  VICTORY = 'victory',
-  DEFEAT = 'defeat',
-}
+export const BattleStatus = {
+  PENDING: "PENDING",
+  VICTORY: "VICTORY",
+  DEFEAT: "DEFEAT",
+} as const;
+
+export type BattleStatus =
+  (typeof BattleStatus)[keyof typeof BattleStatus];
 
 // Monster Configuration
 export interface MonsterAbility {

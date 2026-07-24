@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import battleAPI from '../services/battleApi';
-import { Battle, BattleStats, BattleUIState, BattleStatus } from '../game/types/battleTypes';
+import { BattleStatus } from "../game/types/battleTypes";
+import type{ Battle, BattleStats, BattleUIState } from '../game/types/battleTypes';
 
 /**
  * useBattle Hook

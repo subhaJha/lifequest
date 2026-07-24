@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import Phaser from 'phaser';
 import { BattleScene } from '../game/scenes/BattleScene';
 import battleAPI from '../services/battleApi';
-import { Battle, BattleStatus, MonsterTemplate } from '../game/types/battleTypes';
+import { BattleStatus } from "../game/types/battleTypes";
+import type { Battle, MonsterTemplate } from "../game/types/battleTypes";
 import './BattleContainer.css';
 
 interface BattleContainerProps {
@@ -75,7 +76,10 @@ export const BattleContainer: React.FC<BattleContainerProps> = ({
       physics: {
         default: 'arcade',
         arcade: {
-          gravity: { y: 0 },
+        gravity: {
+  x: 0,
+  y: 0
+},
           debug: false,
         },
       },
