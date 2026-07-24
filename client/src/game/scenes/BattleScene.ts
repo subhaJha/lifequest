@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { BattleHero } from '../entities/BattleHero';
 import { BattleMonster } from '../entities/BattleMonster';
 import battleAPI from '../../services/battleApi';
-import {
+import type {
   Battle,
   MonsterTemplate,
   BattleStatus,
